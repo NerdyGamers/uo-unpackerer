@@ -27,6 +27,7 @@ Color32 = ( (((Color16 >> 10) & 0x1F) * 0xFF / 0x1F) |
 ## File Contents
 
 ## Definitions
+
 ### Anim.idx
 This file contains an index into ANIM.MUL. To load a specific group of frames from ANIM.MUL, simply seek BNum * 12, read in the index record and use Lookup to find the group within ANIM.MUL.
 
@@ -95,21 +96,22 @@ while not EOF
 }
 ```
 
-Absolutely! Here’s a more complete summary of the Ultima Online file formats, using your repo’s style and expanding the section from the original docs based on the information at [uo.stratics.com/heptazane/fileformats.shtml](https://uo.stratics.com/heptazane/fileformats.shtml).
-
 ---
-
-## Definitions
 
 ### ARTIDX.MUL & ART.MUL
 
 These files are used together for storing static art tiles (landscapes, objects, etc.).
 
-- **ARTIDX.MUL** is an index file. Each record is 12 bytes:
-  - **DWORD Lookup**: Offset in ART.MUL
+#### ARTIDX.MUL
+
+- Each record is 12 bytes:
+  - **DWORD Lookup**: Offset in ART.MUL (file offset)
   - **DWORD Size**: Size of the art tile
   - **DWORD Unknown**: (Unused/unknown)
-- **ART.MUL** contains the actual image data, usually as RLE-compressed bitmaps.
+
+#### ART.MUL
+
+- Contains the actual image data, usually as RLE-compressed bitmaps.
 
 ---
 
@@ -117,11 +119,16 @@ These files are used together for storing static art tiles (landscapes, objects,
 
 Used for storing "gumps" (UI graphics, buttons, paperdolls, etc.).
 
-- **GUMPIDX.MUL**: Index file. Each record is 12 bytes:
+#### GUMPIDX.MUL (Index File)
+
+- Each record is 12 bytes:
   - **DWORD Lookup**: Offset in GUMPART.MUL
   - **DWORD Size**: Size of gump
   - **DWORD Unknown**: (Unused/unknown)
-- **GUMPART.MUL**: Contains bitmap data for gumps, usually RLE-compressed.
+
+#### GUMPART.MUL (Data File)
+
+- Contains bitmap data for gumps, usually RLE-compressed.
 
 ---
 
@@ -131,7 +138,7 @@ Contains color tables for hues (used for item coloring, etc.).
 
 - 375 hues, each 708 bytes:
   - 8 bytes: Header (group name, etc.)
-  - 64*3*2 bytes: 64 colors per group, 3 groups per hue, 2 bytes per color (UWORD)
+  - 384 bytes: 64 colors per group, 3 groups per hue, 2 bytes per color (UWORD)
   - 20 bytes: Footer (group name, etc.)
 
 ---
@@ -140,8 +147,10 @@ Contains color tables for hues (used for item coloring, etc.).
 
 Terrain data for each facet (Trammel, Felucca, etc.).
 
-- Each 8x8 block is 196 bytes: 192 bytes for 8x8 tiles (3 bytes per tile), plus 4 bytes for header.
-- Tile: 
+- Each 8x8 block is 196 bytes:
+  - 192 bytes: 8x8 tiles (3 bytes per tile)
+  - 4 bytes: Header
+- **Tile:**
   - 2 bytes: Tile ID
   - 1 byte: Z height
 
@@ -151,8 +160,11 @@ Terrain data for each facet (Trammel, Felucca, etc.).
 
 Defines multi-objects (houses, boats, etc.).
 
-- **MULTI.IDX**: Index file, 4 bytes per record, offset into MULTI.MUL
-- **MULTI.MUL**: Contains arrays of multi-tile structures:
+#### MULTI.IDX (Index File)
+- 4 bytes per record: Offset into MULTI.MUL
+
+#### MULTI.MUL (Data File)
+- Contains arrays of multi-tile structures:
   - 2 bytes: Tile ID
   - 2 bytes: X offset
   - 2 bytes: Y offset
@@ -163,7 +175,9 @@ Defines multi-objects (houses, boats, etc.).
 
 ### PALETTE.MUL
 
-Contains palettes used by animation frames. The details are not well-documented, but typically stores 256 color entries (UWORD).
+Contains palettes used by animation frames.
+- Typically stores 256 color entries (UWORD).
+- Details are not well-documented.
 
 ---
 
@@ -171,7 +185,8 @@ Contains palettes used by animation frames. The details are not well-documented,
 
 Contains color mapping for the radar map.
 
-- 0x4000 (16,384) colors, each 2 bytes (UWORD).
+- 0x4000 (16,384) colors
+- 2 bytes per color (UWORD)
 
 ---
 
@@ -179,8 +194,11 @@ Contains color mapping for the radar map.
 
 Contains skill names and properties.
 
-- **SKILLS.IDX**: Index file into SKILLS.MUL, 12 bytes per record.
-- **SKILLS.MUL**: Contains skill names (ASCII text, null-terminated).
+#### SKILLS.IDX (Index File)
+- 12 bytes per record (index into SKILLS.MUL)
+
+#### SKILLS.MUL (Data File)
+- Contains skill names (ASCII text, null-terminated)
 
 ---
 
@@ -188,11 +206,14 @@ Contains skill names and properties.
 
 Stores sound effects.
 
-- **SOUNDIDX.MUL**: Index file, 12 bytes per record:
+#### SOUNDIDX.MUL (Index File)
+- 12 bytes per record:
   - **DWORD Lookup**: Offset in SOUND.MUL
   - **DWORD Size**: Size of sound data
   - **DWORD Unknown**: (Unused)
-- **SOUND.MUL**: Raw sound data, often in IMA ADPCM format.
+
+#### SOUND.MUL (Data File)
+- Raw sound data, often in IMA ADPCM format
 
 ---
 
@@ -200,8 +221,11 @@ Stores sound effects.
 
 Static tiles for each map facet.
 
-- **STAIDX0.MUL**: Index file, 12 bytes per record.
-- **STATICS0.MUL**: Contains static tile data:
+#### STAIDX0.MUL (Index File)
+- 12 bytes per record
+
+#### STATICS0.MUL (Data File)
+- Contains static tile data:
   - 2 bytes: Tile ID
   - 1 byte: X offset
   - 1 byte: Y offset
@@ -214,7 +238,7 @@ Static tiles for each map facet.
 
 Tile properties and flags (walkable, impassable, etc.).
 
-- Contains item and land tile data.
+- Contains item and land tile data:
   - Each land tile: 26 bytes (flags, name, etc.)
   - Each item tile: 37 bytes (flags, weight, quality, etc.)
 
@@ -224,8 +248,13 @@ Tile properties and flags (walkable, impassable, etc.).
 
 Texture maps for terrain.
 
-- **TEXIDX.MUL**: Index file, 12 bytes per record.
-- **TEXMAPS.MUL**: Contains 44x44 bitmap textures, usually RLE-compressed.
+#### TEXIDX.MUL (Index File)
+
+- 12 bytes per record
+
+#### TEXMAPS.MUL (Data File)
+
+- Contains 44x44 bitmap textures, usually RLE-compressed
 
 ---
 
@@ -233,8 +262,13 @@ Texture maps for terrain.
 
 Patch file for overriding or adding entries in other MUL files.
 
-- Contains records with file ID, block ID, position, and length, followed by replacement data.
-
+- Contains records with:
+  - File ID
+  - Block ID
+  - Position
+  - Length
+  - Replacement data
+ 
 ---
 
 ## Credits
