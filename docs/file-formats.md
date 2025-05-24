@@ -95,26 +95,147 @@ while not EOF
 }
 ```
 
-### ARTIDX.MUL
-### ART.MUL
-### GUMPART.MUL
-### GUMPIDX.MUL
+Absolutely! Here’s a more complete summary of the Ultima Online file formats, using your repo’s style and expanding the section from the original docs based on the information at [uo.stratics.com/heptazane/fileformats.shtml](https://uo.stratics.com/heptazane/fileformats.shtml).
+
+---
+
+## Definitions
+
+### ARTIDX.MUL & ART.MUL
+
+These files are used together for storing static art tiles (landscapes, objects, etc.).
+
+- **ARTIDX.MUL** is an index file. Each record is 12 bytes:
+  - **DWORD Lookup**: Offset in ART.MUL
+  - **DWORD Size**: Size of the art tile
+  - **DWORD Unknown**: (Unused/unknown)
+- **ART.MUL** contains the actual image data, usually as RLE-compressed bitmaps.
+
+---
+
+### GUMPIDX.MUL & GUMPART.MUL
+
+Used for storing "gumps" (UI graphics, buttons, paperdolls, etc.).
+
+- **GUMPIDX.MUL**: Index file. Each record is 12 bytes:
+  - **DWORD Lookup**: Offset in GUMPART.MUL
+  - **DWORD Size**: Size of gump
+  - **DWORD Unknown**: (Unused/unknown)
+- **GUMPART.MUL**: Contains bitmap data for gumps, usually RLE-compressed.
+
+---
+
 ### HUES.MUL
-### MAP0.MUL
-### MULTI.IDX
-### MULTI.MUL
+
+Contains color tables for hues (used for item coloring, etc.).
+
+- 375 hues, each 708 bytes:
+  - 8 bytes: Header (group name, etc.)
+  - 64*3*2 bytes: 64 colors per group, 3 groups per hue, 2 bytes per color (UWORD)
+  - 20 bytes: Footer (group name, etc.)
+
+---
+
+### MAP0.MUL, MAP1.MUL, ... MAPX.MUL
+
+Terrain data for each facet (Trammel, Felucca, etc.).
+
+- Each 8x8 block is 196 bytes: 192 bytes for 8x8 tiles (3 bytes per tile), plus 4 bytes for header.
+- Tile: 
+  - 2 bytes: Tile ID
+  - 1 byte: Z height
+
+---
+
+### MULTI.IDX & MULTI.MUL
+
+Defines multi-objects (houses, boats, etc.).
+
+- **MULTI.IDX**: Index file, 4 bytes per record, offset into MULTI.MUL
+- **MULTI.MUL**: Contains arrays of multi-tile structures:
+  - 2 bytes: Tile ID
+  - 2 bytes: X offset
+  - 2 bytes: Y offset
+  - 2 bytes: Z offset
+  - 4 bytes: Flags
+
+---
+
 ### PALETTE.MUL
+
+Contains palettes used by animation frames. The details are not well-documented, but typically stores 256 color entries (UWORD).
+
+---
+
 ### RADARCOL.MUL
-### SKILLS.IDX
-### SKILLS.MUL
-### SOUND.MUL
-### SOUNDIDX.MUL
-### STAIDX0.MUL
-### STATICS0.MUL
+
+Contains color mapping for the radar map.
+
+- 0x4000 (16,384) colors, each 2 bytes (UWORD).
+
+---
+
+### SKILLS.IDX & SKILLS.MUL
+
+Contains skill names and properties.
+
+- **SKILLS.IDX**: Index file into SKILLS.MUL, 12 bytes per record.
+- **SKILLS.MUL**: Contains skill names (ASCII text, null-terminated).
+
+---
+
+### SOUNDIDX.MUL & SOUND.MUL
+
+Stores sound effects.
+
+- **SOUNDIDX.MUL**: Index file, 12 bytes per record:
+  - **DWORD Lookup**: Offset in SOUND.MUL
+  - **DWORD Size**: Size of sound data
+  - **DWORD Unknown**: (Unused)
+- **SOUND.MUL**: Raw sound data, often in IMA ADPCM format.
+
+---
+
+### STAIDX0.MUL & STATICS0.MUL
+
+Static tiles for each map facet.
+
+- **STAIDX0.MUL**: Index file, 12 bytes per record.
+- **STATICS0.MUL**: Contains static tile data:
+  - 2 bytes: Tile ID
+  - 1 byte: X offset
+  - 1 byte: Y offset
+  - 1 byte: Z height
+  - 1 byte: Hue
+
+---
+
 ### TILEDATA.MUL
-### TEXIDX.MUL
-### TEXMAPS.MUL
+
+Tile properties and flags (walkable, impassable, etc.).
+
+- Contains item and land tile data.
+  - Each land tile: 26 bytes (flags, name, etc.)
+  - Each item tile: 37 bytes (flags, weight, quality, etc.)
+
+---
+
+### TEXIDX.MUL & TEXMAPS.MUL
+
+Texture maps for terrain.
+
+- **TEXIDX.MUL**: Index file, 12 bytes per record.
+- **TEXMAPS.MUL**: Contains 44x44 bitmap textures, usually RLE-compressed.
+
+---
+
 ### VERDATA.MUL
+
+Patch file for overriding or adding entries in other MUL files.
+
+- Contains records with file ID, block ID, position, and length, followed by replacement data.
+
+---
 
 ## Credits
 Most of the file formats are reverse engineered by great UO Community members. They deserve a special thank you.
@@ -127,4 +248,11 @@ skills.idx, skills.mul by Sir Valgriz
 
 soundidx, sound by Steve Dang
 
-verdata by Cironian
+**verdata** by Cironian
+---
+
+### Extra Credits
+
+**References:**  
+- [uo.stratics.com/heptazane/fileformats.shtml](https://uo.stratics.com/heptazane/fileformats.shtml)  
+- [Grayworld - UO File Format Documentation](http://www.grayworld.ru/uo/index_eng.html)
